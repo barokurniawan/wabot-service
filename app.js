@@ -36,6 +36,7 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
+    console.log('incoming message: ', msg.body);
     if (msg.body == '!ping') {
         const chat = await msg.getChat();
         chat.sendStateTyping();
