@@ -61,4 +61,4 @@ http.createServer(function (req, res) {
 
     res.write('message : "' + q.message + '" add to queue.'); //write a response to the client
     res.end(); //end the response
-}).listen(3002); //the server object listens on port 3002
+}).listen(3002, "0.0.0.0"); //the server object listens on port 3002
