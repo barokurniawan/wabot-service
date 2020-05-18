@@ -10,4 +10,5 @@ services:
         - "3002:3002"
     volumes:
       - ./:/var/www
+      - /var/www/node_modules
     restart: always
