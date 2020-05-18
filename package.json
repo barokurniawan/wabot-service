@@ -1,0 +1,26 @@
+{
+  "name": "wabot",
+  "version": "1.0.0",
+  "description": "test wabot",
+  "main": "app.js",
+  "dependencies": {
+    "whatsapp-web.js": "^1.5.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barokurniawan/wabot-service.git"
+  },
+  "keywords": [
+    "wabot"
+  ],
+  "author": "barokurniawan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/barokurniawan/wabot-service/issues"
+  },
+  "homepage": "https://github.com/barokurniawan/wabot-service#readme"
+}
