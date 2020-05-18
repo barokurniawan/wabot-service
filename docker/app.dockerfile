@@ -19,5 +19,5 @@ RUN npm i whatsapp-web.js
 # Bundle app source
 COPY . .
 
-EXPOSE 8080
+EXPOSE 3002
 CMD [ "node", "app.js" ]
