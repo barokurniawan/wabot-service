@@ -37,7 +37,7 @@ client.on('auth_failure', msg => {
 client.on('qr', (qr) => {
     // Generate and scan this code with your phone
     _qrcode = qr;
-    console.log('QR RECEIVED', qr);
+    console.log("QR is ready");
 });
 
 client.on('ready', () => {
@@ -67,20 +67,34 @@ app.get('/', routeMain.handleIndex.bind(routeMain));
 app.get('/device', routeMain.handleDevice.bind(routeMain));
 
 app.get('/qr/scan', function (req, res) {
-    client.getState().then(function (result) {
-        if (result == "CONNECTED") {
-            res.setHeader("Content-Type", "Application/Json");
-            res.status(403).send(JSON.stringify({
-                info: false,
-                status: "Device is already connected"
-            }));
-        } else {
-            QRCode.toDataURL(_qrcode).then(function (imgdata) {
-                res.setHeader("Content-Type", "image/png");
-                res.status(200).write(imgdata);
-            });
-        }
-    });
+    if (_qrcode) {
+        QRCode.toDataURL(_qrcode).then(function (imgdata) {
+            res.setHeader("Content-Type", "text/html");
+            res.status(200).write(`<html>
+                <head>
+                    <title>Scan this qrcode</title>
+                    <meta name="viewport" content="width=device-width">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <style>
+                        body, html{
+                            margin: 0; padding: 0;
+                            width: 100%; height: 100%;
+                            text-align: center;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <img style="margin-top: 10%;" src="`+ imgdata + `">
+                </body>
+            </html>`);
+        });
+    } else {
+        res.setHeader("Content-Type", "Application/Json");
+        res.status(200).send(JSON.stringify({
+            info: true,
+            status: "Device is already connected"
+        }));
+    }
 });
 
 //start whatsapp client engine 
