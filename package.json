@@ -5,6 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "express": "^4.17.1",
+    "qrcode": "^1.4.4",
     "whatsapp-web.js": "^1.5.1"
   },
   "devDependencies": {},

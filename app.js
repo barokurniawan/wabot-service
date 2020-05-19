@@ -3,10 +3,13 @@ const fs = require('fs');
 const util = require('util');
 const express = require('express');
 const RouteMain = require('./src/http/route-main');
+var QRCode = require('qrcode')
 
 const app = express();
 const port = 3002;
 const host = "0.0.0.0";
+
+var _qrcode = null;
 
 const SESSION_FILE_PATH = './bot-session.json';
 let sessionCfg;
@@ -33,6 +36,7 @@ client.on('auth_failure', msg => {
 
 client.on('qr', (qr) => {
     // Generate and scan this code with your phone
+    _qrcode = qr;
     console.log('QR RECEIVED', qr);
 });
 
@@ -61,6 +65,23 @@ routeMain.setBotClient(client);
 //define route request
 app.get('/', routeMain.handleIndex.bind(routeMain));
 app.get('/device', routeMain.handleDevice.bind(routeMain));
+
+app.get('/qr/scan', function (req, res) {
+    client.getState().then(function (result) {
+        if (result == "CONNECTED") {
+            res.setHeader("Content-Type", "Application/Json");
+            res.status(403).send(JSON.stringify({
+                info: false,
+                status: "Device is already connected"
+            }));
+        } else {
+            QRCode.toDataURL(_qrcode).then(function (imgdata) {
+                res.setHeader("Content-Type", "image/png");
+                res.status(200).write(imgdata);
+            });
+        }
+    });
+});
 
 //start whatsapp client engine 
 client.initialize();

@@ -14,6 +14,7 @@ COPY packa*.json ./
 RUN npm install
 RUN npm install whatsapp-web.js
 RUN npm install express
+RUN npm install qrcode
 # If you are building your code for production
 # RUN npm ci --only=production
 
