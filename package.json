@@ -4,6 +4,7 @@
   "description": "test wabot",
   "main": "app.js",
   "dependencies": {
+    "express": "^4.17.1",
     "whatsapp-web.js": "^1.5.1"
   },
   "devDependencies": {},

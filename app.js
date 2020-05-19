@@ -1,9 +1,14 @@
 const { Client } = require('whatsapp-web.js');
 const fs = require('fs');
-const http = require('http');
-const url = require('url');
+const util = require('util');
+const express = require('express');
+const RouteMain = require('./src/http/route-main');
 
-const SESSION_FILE_PATH = './session.json';
+const app = express();
+const port = 3002;
+const host = "0.0.0.0";
+
+const SESSION_FILE_PATH = './bot-session.json';
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
     sessionCfg = require(SESSION_FILE_PATH);
@@ -36,7 +41,7 @@ client.on('ready', () => {
 });
 
 client.on('message', async msg => {
-    console.log('incoming message: ', msg.body);
+    console.log(util.format("incoming message from %s : %s", msg.from, msg.body));
     if (msg.body == '!ping') {
         const chat = await msg.getChat();
         chat.sendStateTyping();
@@ -50,15 +55,15 @@ client.on('message', async msg => {
     }
 });
 
+const routeMain = new RouteMain();
+routeMain.setBotClient(client);
+
+//define route request
+app.get('/', routeMain.handleIndex.bind(routeMain));
+app.get('/device', routeMain.handleDevice.bind(routeMain));
+
+//start whatsapp client engine 
 client.initialize();
 
-//create a server object:
-http.createServer(function (req, res) {
-    var q = url.parse(req.url, true).query;
-    if (typeof q.phone != "undefined") {
-        client.sendMessage(q.phone + "@c.us", q.message);
-    }
-
-    res.write('message : "' + q.message + '" add to queue.'); //write a response to the client
-    res.end(); //end the response
-}).listen(3002, "0.0.0.0"); //the server object listens on port 3002
+//start http server 
+app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`))
