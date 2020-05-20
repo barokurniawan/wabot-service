@@ -32,6 +32,11 @@ client.on('authenticated', (session) => {
 client.on('auth_failure', msg => {
     // Fired if session restore was unsuccessfull
     console.error('AUTHENTICATION FAILURE', msg);
+
+    fs.unlinkSync(SESSION_FILE_PATH);
+
+    client.destroy();
+    process.exit(1);
 });
 
 client.on('qr', (qr) => {
