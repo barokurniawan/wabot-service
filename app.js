@@ -3,13 +3,11 @@ const fs = require('fs');
 const util = require('util');
 const express = require('express');
 const RouteMain = require('./src/http/route-main');
-var QRCode = require('qrcode')
+const QRCode = require('qrcode');
 
 const app = express();
 const port = 3002;
 const host = "0.0.0.0";
-
-var _qrcode = null;
 
 const SESSION_FILE_PATH = './bot-session.json';
 let sessionCfg;
@@ -18,6 +16,9 @@ if (fs.existsSync(SESSION_FILE_PATH)) {
 }
 
 const client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
+const routeMain = new RouteMain();
+routeMain.setBotClient(client);
+routeMain.setQRModule(QRCode);
 
 client.on('authenticated', (session) => {
     console.log('AUTHENTICATED', session);
@@ -33,19 +34,28 @@ client.on('auth_failure', msg => {
     // Fired if session restore was unsuccessfull
     console.error('AUTHENTICATION FAILURE', msg);
 
+    // remove current session file
     fs.unlinkSync(SESSION_FILE_PATH);
 
-    client.destroy();
-    process.exit(1);
+    //destroy client instant 
+    client.destroy().then(function () {
+        /*
+            we are using docker with restart:always, exit the 
+            system to make container reboot, so we get a new fresh copy
+            remember, there is a downtime.
+        */
+        process.exit(1);
+    });
 });
 
 client.on('qr', (qr) => {
     // Generate and scan this code with your phone
-    _qrcode = qr;
+    routeMain.setQRCode(qr);
     console.log("QR is ready");
 });
 
 client.on('ready', () => {
+    routeMain.setQRCode(null);
     console.log('Client is ready!');
 });
 
@@ -64,42 +74,34 @@ client.on('message', async msg => {
     }
 });
 
-const routeMain = new RouteMain();
-routeMain.setBotClient(client);
-
 //define route request
 app.get('/', routeMain.handleIndex.bind(routeMain));
 app.get('/device', routeMain.handleDevice.bind(routeMain));
+app.get('/qr/scan', routeMain.handleScanner.bind(routeMain));
 
-app.get('/qr/scan', function (req, res) {
-    if (_qrcode) {
-        QRCode.toDataURL(_qrcode).then(function (imgdata) {
-            res.setHeader("Content-Type", "text/html");
-            res.status(200).write(`<html>
-                <head>
-                    <title>Scan this qrcode</title>
-                    <meta name="viewport" content="width=device-width">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>
-                        body, html{
-                            margin: 0; padding: 0;
-                            width: 100%; height: 100%;
-                            text-align: center;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <img style="margin-top: 10%;" src="`+ imgdata + `">
-                </body>
-            </html>`);
-        });
-    } else {
-        res.setHeader("Content-Type", "Application/Json");
-        res.status(200).send(JSON.stringify({
-            info: true,
-            status: "Device is already connected"
-        }));
-    }
+//reset will remove session so we need to scan new qrcode
+app.get('/api/reset', function (req, res) {
+    // remove current session file
+    fs.unlinkSync(SESSION_FILE_PATH);
+
+    //destroy client instant 
+    client.destroy().then(function () {
+        /*
+            we are using docker with restart:always, exit the 
+            system to make container reboot, so we get a new fresh copy
+            remember, there is a downtime.
+        */
+        process.exit(1);
+    });
+});
+
+//cek server status, to check uptime after downtime
+app.get('/api/health', function (req, res) {
+    res.setHeader('Content-Type', 'Application/Json');
+    res.send(JSON.stringify({
+        info: true,
+        status: 'server is up'
+    }));
 });
 
 //start whatsapp client engine 
