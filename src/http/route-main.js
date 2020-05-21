@@ -69,7 +69,6 @@ module.exports = class RouteMain {
 
     handleScanner(req, res) {
         var _that = this;
-        console.log(_that.getQRCode());
         if (_that.getQRCode()) {
             _that.getQRModule().toDataURL(_that.getQRCode()).then(function (imgdata) {
                 res.setHeader("Content-Type", "text/html");

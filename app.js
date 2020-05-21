@@ -108,4 +108,4 @@ app.get('/api/health', function (req, res) {
 client.initialize();
 
 //start http server 
-app.listen(port, host, () => console.log(`Example app listening at http://localhost:${port}`))
+app.listen(port, host, () => console.log(`listening at http://${host}:${port}`))
