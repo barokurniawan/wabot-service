@@ -4,6 +4,7 @@
   "description": "test wabot",
   "main": "app.js",
   "dependencies": {
+    "axios": "^0.19.2",
     "express": "^4.17.1",
     "qrcode": "^1.4.4",
     "whatsapp-web.js": "^1.5.1"

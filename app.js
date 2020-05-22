@@ -1,9 +1,10 @@
-const { Client } = require('whatsapp-web.js');
+const { Client, MessageMedia } = require('whatsapp-web.js');
 const fs = require('fs');
 const util = require('util');
 const express = require('express');
 const RouteMain = require('./src/http/route-main');
 const QRCode = require('qrcode');
+const axios = require('axios').default;
 
 const app = express();
 const port = 3002;
@@ -13,6 +14,13 @@ const SESSION_FILE_PATH = './bot-session.json';
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {
     sessionCfg = require(SESSION_FILE_PATH);
+}
+
+const fileToBase64 = async function (file) {
+    let image = await axios.get(file, { responseType: 'arraybuffer' });
+    let returnedB64 = Buffer.from(image.data).toString('base64');
+
+    return returnedB64;
 }
 
 const client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
@@ -69,7 +77,8 @@ client.on('message', async msg => {
     } else {
         const chat = await msg.getChat();
         chat.sendStateTyping();
-        client.sendMessage(msg.from, 'Perintah tidak diketahui');
+        var media = new MessageMedia('application/pdf', await fileToBase64('https://pdfs.semanticscholar.org/77e9/9d84c1574c79cdbf15f1723637f7b24869c1.pdf'), 'ini file nya.pdf');
+        client.sendMessage(msg.from, media);
         chat.clearState();
     }
 });
