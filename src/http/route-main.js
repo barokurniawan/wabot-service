@@ -1,3 +1,13 @@
+const { MessageMedia } = require('whatsapp-web.js');
+const axios = require('axios').default;
+
+const fileToBase64 = async function (file) {
+    let image = await axios.get(file, { responseType: 'arraybuffer' });
+    let returnedB64 = Buffer.from(image.data).toString('base64');
+
+    return returnedB64;
+}
+
 module.exports = class RouteMain {
 
     constructor() {
@@ -30,9 +40,28 @@ module.exports = class RouteMain {
         return this.QRModule;
     }
 
-    handleIndex(req, res) {
+    async handleIndex(req, res) {
         if (typeof req.query.phone != "undefined") {
-            this.client.sendMessage(req.query.phone + "@c.us", req.query.message);
+            if (typeof req.query.mime != "undefined" && typeof req.query.file != "undefined" && typeof req.query.filename != "undefined") {
+                const chat = await this.client.getChatById(req.query.phone + "@c.us");
+                chat.sendStateTyping();
+                var media = new MessageMedia(req.query.mime, await fileToBase64(req.query.file), req.query.filename);
+
+                if (req.query.message) {
+                    this.client.sendMessage(req.query.phone + "@c.us", media, {
+                        caption: req.query.message
+                    });
+                } else {
+                    this.client.sendMessage(req.query.phone + "@c.us", media);
+                }
+
+                chat.clearState();
+            } else {
+                const chat = await this.client.getChatById(req.query.phone + "@c.us");
+                chat.sendStateTyping();
+                this.client.sendMessage(req.query.phone + "@c.us", req.query.message);
+                chat.clearState();
+            }
         }
 
         res.setHeader('Content-Type', 'Application/Json');
