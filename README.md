@@ -16,3 +16,7 @@ Send a text message :
 
 Send a document : 
 `http://localhost:3002/?phone=6282215512601&mime=application/pdf&filename=dosis.pdf&file=https://www.pmadocs.com/fever_and_pain_medication_dosages.pdf`
+
+To send image with caption, use "send a document" end point, with message parameter. 
+
+Caption only visible on image
