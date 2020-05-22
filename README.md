@@ -9,3 +9,10 @@ NOTE: I can't guarantee you will not be blocked by using this method, although i
 The module is now available on npm! `npm i whatsapp-web.js`
 
 Please note that Node v8+ is required due to Puppeteer.
+
+## Usage 
+Send a text message :
+`http://localhost:3002/?phone=6282215512601&message=keren%20euy+jhhk`
+
+Send a document : 
+`http://localhost:3002/?phone=6282215512601&mime=application/pdf&filename=dosis.pdf&file=https://www.pmadocs.com/fever_and_pain_medication_dosages.pdf`
