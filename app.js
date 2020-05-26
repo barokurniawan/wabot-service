@@ -92,14 +92,14 @@ client.on('message', async msg => {
 });
 
 //define route request
-app.get('/', routeMain.handleIndex.bind(routeMain));
-app.get('/device', routeMain.handleDevice.bind(routeMain));
-app.post('/', routeMain.handleIndex.bind(routeMain));
-app.post('/device', routeMain.handleDevice.bind(routeMain));
-app.get('/qr/scan', routeMain.handleScanner.bind(routeMain));
+app.get('/api/message', routeMain.handleIndex.bind(routeMain));
+app.get('/api/device', routeMain.handleDevice.bind(routeMain));
+app.post('/api/message', routeMain.handleIndex.bind(routeMain));
+app.post('/api/device', routeMain.handleDevice.bind(routeMain));
+app.get('/api/qr', routeMain.handleScanner.bind(routeMain));
 
 //reset will remove session so we need to scan new qrcode
-app.get('/api/reset', function (req, res) {
+app.post('/api/device/reset', function (req, res) {
     if (fs.existsSync(SESSION_FILE_PATH) == false || routeMain.clientReady == false) {
         res.setHeader('Content-Type', 'Application/Json');
         res.send(JSON.stringify({
