@@ -1,2 +1,4 @@
 node_modules
+engine/node_modules
 bot-session.json
+interface/web/vendor

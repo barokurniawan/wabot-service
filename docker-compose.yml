@@ -1,14 +1,44 @@
 version: '3'
+networks:
+  wabot_network:
+    driver: bridge
 services:
-  app:
+  engine:
+    networks:
+      - wabot_network
     build:
       context: ./
-      dockerfile: docker/app.dockerfile
-    image: wabot_app
-    container_name: wabot_app
+      dockerfile: docker/engine.dockerfile
+    image: wabot_engine
+    container_name: wabot_engine
     ports:
-        - "3002:3002"
+        - "3002"
     volumes:
-      - ./:/var/www
+      - ./engine:/var/www
       - /var/www/node_modules
     restart: always
+  interface:
+    networks:
+      - wabot_network
+    build:
+      context: ./
+      dockerfile: docker/interface.dockerfile
+    image: wabot_interface
+    container_name: wabot_interface
+    volumes:
+      - ./interface/web:/var/www
+    restart: always
+  web:
+    networks:
+      - wabot_network
+    build:
+      context: ./
+      dockerfile: docker/web.dockerfile
+    container_name: wabot_web
+    restart: always
+    volumes:
+      - ./interface/web:/var/www
+    ports:
+      - "8080:80"
+    depends_on:
+      - interface
