@@ -5,18 +5,45 @@ It uses Puppeteer to run a real instance of Whatsapp Web to avoid getting blocke
 
 NOTE: I can't guarantee you will not be blocked by using this method, although it has worked for me. WhatsApp does not allow bots or unofficial clients on their platform, so this shouldn't be considered totally safe.
 
-## Installation
-The module is now available on npm! `npm i whatsapp-web.js`
+## Engine
 
-Please note that Node v8+ is required due to Puppeteer.
+Engine is a web application write in javascript (nodejs), play role as a main application (main engine)
+so request is not direcly to the engine end point.
+
+## Interface
+
+Interface is a web application that run as API gateway for Engine. Every request is handle by interface and 
+then forwarded to the Engine. Interface play role as a middleware layer, every request validated in interface before 
+forwarded to the engine
+
+## Installation
+`docker-compose up --build`
 
 ## Usage 
 Send a text message :
-`http://localhost:3002/?phone=6282215512601&message=keren%20euy+jhhk`
+```
+http://localhost:8080/api/message?phone=6282215512601&message=test+message
+```
 
 Send a document : 
-`http://localhost:3002/?phone=6282215512601&mime=application/pdf&filename=dosis.pdf&file=https://www.pmadocs.com/fever_and_pain_medication_dosages.pdf`
+```
+http://localhost:8080/api/message?phone=6282215512601&mime=application/pdf&filename=dosis.pdf&file=https://www.pmadocs.com/fever_and_pain_medication_dosages.pdf
 
-To send image with caption, use "send a document" end point, with message parameter. 
+//To send image with caption, use "send a document" end point, with message parameter. 
+//Caption only visible on image
+```
 
-Caption only visible on image
+Device Information : 
+```
+http://localhost:8080/api/device
+```
+
+Reset Device (downtime) : 
+```
+http://localhost:8080/api/device
+```
+
+Check server health : 
+```
+http://localhost:8080/api/health
+```
