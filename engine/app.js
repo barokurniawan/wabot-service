@@ -15,7 +15,6 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
-
 const SESSION_FILE_PATH = './bot-session.json';
 let sessionCfg;
 if (fs.existsSync(SESSION_FILE_PATH)) {

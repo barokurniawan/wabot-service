@@ -46,11 +46,13 @@ module.exports = class RouteMain {
     }
 
     async handleIndex(req, res) {
+        var _that = this,
+            data = req.query;
 
-        console.log(req.query);
-        console.log(req.body);
+        if (req.method == "POST") {
+            data = req.body;
+        }
 
-        var _that = this;
         res.setHeader('Content-Type', 'Application/Json');
         if (_that.clientReady == false) {
             res.send(JSON.stringify({
@@ -60,25 +62,25 @@ module.exports = class RouteMain {
             return;
         }
 
-        if (typeof req.query.phone != "undefined") {
-            if (typeof req.query.mime != "undefined" && typeof req.query.file != "undefined" && typeof req.query.filename != "undefined") {
-                const chat = await this.client.getChatById(req.query.phone + "@c.us");
+        if (typeof data.phone != "undefined") {
+            if (typeof data.mime != "undefined" && typeof data.file != "undefined" && typeof data.filename != "undefined") {
+                const chat = await this.client.getChatById(data.phone + "@c.us");
                 chat.sendStateTyping();
-                var media = new MessageMedia(req.query.mime, await fileToBase64(req.query.file), req.query.filename);
+                var media = new MessageMedia(data.mime, await fileToBase64(data.file), data.filename);
 
-                if (req.query.message) {
-                    this.client.sendMessage(req.query.phone + "@c.us", media, {
-                        caption: req.query.message
+                if (data.message) {
+                    this.client.sendMessage(data.phone + "@c.us", media, {
+                        caption: data.message
                     });
                 } else {
-                    this.client.sendMessage(req.query.phone + "@c.us", media);
+                    this.client.sendMessage(data.phone + "@c.us", media);
                 }
 
                 chat.clearState();
             } else {
-                const chat = await this.client.getChatById(req.query.phone + "@c.us");
+                const chat = await this.client.getChatById(data.phone + "@c.us");
                 chat.sendStateTyping();
-                this.client.sendMessage(req.query.phone + "@c.us", req.query.message);
+                this.client.sendMessage(data.phone + "@c.us", data.message);
                 chat.clearState();
             }
         }
@@ -87,8 +89,8 @@ module.exports = class RouteMain {
             info: true,
             status: 'send to queue',
             data: {
-                message: req.query.message,
-                target: req.query.phone
+                message: data.message,
+                target: data.phone
             }
         }));
     }
