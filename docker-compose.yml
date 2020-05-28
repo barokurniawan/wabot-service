@@ -34,6 +34,7 @@ services:
     build:
       context: ./
       dockerfile: docker/web.dockerfile
+    image: wabot_web
     container_name: wabot_web
     restart: always
     volumes:
