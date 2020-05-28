@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Engine\Engine;
 use Illuminate\Http\Request;
 use App\Jobs\SendTextMessage;
+use App\Jobs\SendMediaMessage;
 use Illuminate\Support\Facades\Queue;
 
 class WabotServiceController extends Controller
@@ -35,6 +36,29 @@ class WabotServiceController extends Controller
         ]);
 
         Queue::push(new SendTextMessage($request->phone, $request->message));
+        return [
+            'info' => true,
+            'status' => 'Send to queue'
+        ];
+    }
+
+    public function mediaMessageHandler(Request $request)
+    {
+        $this->validate($request, [
+            'phone'       => 'required',
+            'mime'        => 'required',
+            'filename'    => 'required',
+            'fileAddress' => 'required'
+        ]);
+
+        Queue::push(new SendMediaMessage(
+            $request->phone,
+            $request->mime,
+            $request->filename,
+            $request->fileAddress,
+            $request->message
+        ));
+
         return [
             'info' => true,
             'status' => 'Send to queue'

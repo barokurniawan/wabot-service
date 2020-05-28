@@ -20,6 +20,10 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         'as' => 'send_message', 'uses' => 'WabotServiceController@textMessageHandler'
     ]);
 
+    $router->post('/media', [
+        'as' => 'send_message', 'uses' => 'WabotServiceController@mediaMessageHandler'
+    ]);
+
     $router->get('/device', [
         'as' => 'device_info', 'uses' => 'WabotServiceController@deviceInfoHandler'
     ]);
