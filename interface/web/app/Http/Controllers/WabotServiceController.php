@@ -37,7 +37,25 @@ class WabotServiceController extends Controller
         Queue::push(new SendTextMessage($request->phone, $request->message));
         return [
             'info' => true,
-            'status' => 'Added to queue'
+            'status' => 'Send to queue'
         ];
+    }
+
+    public function deviceInfoHandler(Request $request)
+    {
+        $engine = Engine::getInstance();
+        return json_encode($engine->getDeviceInformation());
+    }
+
+    public function resetDeviceHandler(Request $request)
+    {
+        $engine = Engine::getInstance();
+        return json_encode($engine->resetEngine());
+    }
+
+    public function serverHealthHandler(Request $request)
+    {
+        $engine = Engine::getInstance();
+        return json_encode($engine->serverHealth());
     }
 }
