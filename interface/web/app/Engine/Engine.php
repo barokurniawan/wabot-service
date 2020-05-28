@@ -44,7 +44,7 @@ class Engine
     /**
      * Send media such as pdf, image, etc, but video.
      */
-    public function sendMediaMessage(string $targetPhone, string $mime, string $filename, string $fileAddess, string $message = '')
+    public function sendMediaMessage(string $targetPhone, string $mime, string $filename, string $fileAddess, string $message = null)
     {
         $client = $this->getHttpClient();
         $response = $client->post('/api/message', [
@@ -108,7 +108,15 @@ class Engine
     public function getQRCode()
     {
         $client = $this->getHttpClient();
-        $response = $client->get('/api/qr');
+
+        try {
+            $response = $client->get('/api/qr');
+        } catch (\Throwable $th) {
+            return (object) [
+                'info' => false,
+                'status' => "Failed to connect to the engine. Maybe client is not ready yet."
+            ];
+        }
 
         if ($response->getStatusCode() != 200) {
             info('getQRCode status code : ' . $response->getStatusCode());
@@ -128,7 +136,15 @@ class Engine
     public function getDeviceInformation()
     {
         $client = $this->getHttpClient();
-        $response = $client->get('/api/device');
+
+        try {
+            $response = $client->get('/api/device');
+        } catch (\Throwable $th) {
+            return (object) [
+                'info' => false,
+                'status' => "Failed to connect to the engine. Maybe client is not ready yet."
+            ];
+        }
 
         if ($response->getStatusCode() != 200) {
             info('getDeviceInformation status code : ' . $response->getStatusCode());
@@ -170,8 +186,12 @@ class Engine
         $client = $this->getHttpClient();
 
         try {
-            $client->get('/api/device/reset');
+            $client->post('/api/device/reset');
         } catch (\Throwable $th) {
+            return (object) [
+                'info' => false,
+                'status' => $th->getMessage()
+            ];
         }
 
         return (object) [
