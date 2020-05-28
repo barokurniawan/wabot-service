@@ -100,6 +100,16 @@ module.exports = class RouteMain {
             webVersion = null,
             that = this;
 
+        if (that.clientReady == false) {
+            res.setHeader('Content-Type', 'Application/Json');
+            res.send(JSON.stringify({
+                info: false,
+                status: 'Client is not ready'
+            }));
+
+            return;
+        }
+
         that.client.getState().then(function (result) {
             state = result;
             that.client.getWWebVersion().then(function (result) {
