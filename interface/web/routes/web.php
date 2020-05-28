@@ -19,4 +19,16 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('/message', [
         'as' => 'send_message', 'uses' => 'WabotServiceController@textMessageHandler'
     ]);
+
+    $router->get('/device', [
+        'as' => 'device_info', 'uses' => 'WabotServiceController@deviceInfoHandler'
+    ]);
+
+    $router->get('/device/reset', [
+        'as' => 'device_reset', 'uses' => 'WabotServiceController@resetDeviceHandler'
+    ]);
+
+    $router->get('/health', [
+        'as' => 'server_health', 'uses' => 'WabotServiceController@serverHealthHandler'
+    ]);
 });
