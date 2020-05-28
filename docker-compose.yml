@@ -3,6 +3,7 @@ networks:
   wabot_network:
     driver: bridge
 services:
+
   engine:
     networks:
       - wabot_network
@@ -17,6 +18,7 @@ services:
       - ./engine:/var/www
       - /var/www/node_modules
     restart: always
+
   interface:
     networks:
       - wabot_network
@@ -28,6 +30,7 @@ services:
     volumes:
       - ./interface/web:/var/www
     restart: always
+
   web:
     networks:
       - wabot_network
@@ -43,3 +46,31 @@ services:
       - "8080:80"
     depends_on:
       - interface
+
+  queue:
+    build:
+      context: ./
+      dockerfile: docker/queue.dockerfile
+    image: wabot_queue
+    networks:
+      - wabot_network
+    container_name: wabot_queue
+    depends_on:
+      - interface
+    volumes:
+      - ./interface/web:/var/www
+    networks:
+      - wabot_network
+    restart: always
+
+  redis:
+    build:
+      context: ./
+      dockerfile: docker/redis.dockerfile
+    container_name: wabot_redis
+    image: wabot_redis
+    networks:
+      - wabot_network
+    ports:
+      - "6379:6379"
+    restart: always
