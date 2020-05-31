@@ -15,7 +15,10 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
-var ConnectedClient = [];
+var ConnectedClient = [],
+    StreamQRList = [],
+    ReadyClientList = [];
+
 const routeMain = new RouteMain();
 routeMain.setBotClient(ConnectedClient);
 routeMain.setQRModule(QRCode);
@@ -33,33 +36,45 @@ app.get('/api/registration', function (req, res) {
     }
 
     var USER_ID = generateID(querySTR.phone);
-    var SESSION_FILE_PATH = './bot-session' + USER_ID + '.json';
+    if (typeof ConnectedClient[USER_ID] != 'undefined') {
+        res.setHeader('Content-Type', 'Application/Json');
+        res.send(JSON.stringify({
+            info: false,
+            status: 'Client is already registered.'
+        }));
+
+        return;
+    }
+
+    StreamQRList[USER_ID] = null;
+    var SESSION_FILE_PATH = './session/botsession-' + USER_ID + '.json';
     let sessionCfg;
     if (fs.existsSync(SESSION_FILE_PATH)) {
         sessionCfg = require(SESSION_FILE_PATH);
     }
 
-    var client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
-    client.on('disconnected', (reason) => {
+    ConnectedClient[USER_ID] = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
+    ConnectedClient[USER_ID].on('disconnected', (reason) => {
         if (fs.existsSync(SESSION_FILE_PATH)) {
             // remove current session file
             fs.unlinkSync(SESSION_FILE_PATH);
             sessionCfg = null;
         }
 
-        routeMain.isClientReady(false);
+        ReadyClientList = ReadyClientList.splice(USER_ID);
+        routeMain.isClientReady(ReadyClientList);
+
+        // delete from connected list
+        removeClient(USER_ID);
+        routeMain.setBotClient(ConnectedClient);
 
         //destroy client instance
-        client.destroy().then(function () {
+        ConnectedClient[USER_ID].destroy().then(function () {
             console.log('Client is shutdown..');
-            //start whatsapp client engine 
-            client.initialize().then(function () {
-                console.log('Fresh copy is ready..');
-            });
         });
     });
 
-    client.on('authenticated', (session) => {
+    ConnectedClient[USER_ID].on('authenticated', (session) => {
         console.log('login sucess..');
         sessionCfg = session;
         fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
@@ -69,7 +84,7 @@ app.get('/api/registration', function (req, res) {
         });
     });
 
-    client.on('auth_failure', msg => {
+    ConnectedClient[USER_ID].on('auth_failure', msg => {
         // Fired if session restore was unsuccessfull
         console.error('AUTHENTICATION FAILURE', msg);
 
@@ -78,28 +93,32 @@ app.get('/api/registration', function (req, res) {
         sessionCfg = null;
 
         //destroy client instant 
-        client.destroy().then(function () {
+        ConnectedClient[USER_ID].destroy().then(function () {
             console.log('Client is shutdown..');
             //start whatsapp client engine 
-            client.initialize().then(function () {
+            ConnectedClient[USER_ID].initialize().then(function () {
                 console.log('Fresh copy is ready..');
             });
         });
     });
 
-    client.on('qr', (qr) => {
+    ConnectedClient[USER_ID].on('qr', (qr) => {
         // Generate and scan this code with your phone
-        routeMain.setQRCode(qr);
+        StreamQRList[USER_ID] = qr;
+        routeMain.setQRCode(StreamQRList);
         console.log("qrcode is ready..");
     });
 
-    client.on('ready', () => {
-        routeMain.setQRCode(null);
-        routeMain.isClientReady(true);
+    ConnectedClient[USER_ID].on('ready', () => {
+        StreamQRList[USER_ID] = false;
+        routeMain.setQRCode(StreamQRList);
+
+        ReadyClientList[USER_ID] = true;
+        routeMain.isClientReady(ReadyClientList);
         console.log('Client is ready..');
     });
 
-    client.on('message', async msg => {
+    ConnectedClient[USER_ID].on('message', async msg => {
         console.log(util.format("incoming message from %s : %s", msg.from, msg.body));
         if (msg.body == '!ping') {
             const chat = await msg.getChat();
@@ -110,18 +129,20 @@ app.get('/api/registration', function (req, res) {
     });
 
     //start whatsapp client engine 
-    client.initialize().then(function () {
+    ConnectedClient[USER_ID].initialize().then(function () {
         console.log('initializing');
-        //add to ConnectedClient list 
-        ConnectedClient[USER_ID] = client;
-        res.setHeader('Content-Type', 'Application/Json');
-        res.send(JSON.stringify({
-            info: true,
-            status: 'Registration success.'
-        }));
     }).catch(function (err) {
         console.error(err);
     });
+
+    //update botclient object
+    routeMain.setBotClient(ConnectedClient);
+
+    res.setHeader('Content-Type', 'Application/Json');
+    res.send(JSON.stringify({
+        info: true,
+        status: 'Init registration..'
+    }));
 });
 
 //define route request
@@ -171,12 +192,25 @@ app.get('/api/list-user', function (req, res) {
     res.setHeader('Content-Type', 'Application/Json');
     res.send(JSON.stringify({
         info: true,
-        data: ConnectedClient
+        data: extractClient(ConnectedClient)
     }));
 });
 
 function generateID(phone) {
     return phone + "@c.us";
+}
+
+function extractClient(ConnectedClient) {
+    var o = [];
+    for (k in ConnectedClient) {
+        o.push(k);
+    }
+
+    return o;
+}
+
+function removeClient(USER_ID) {
+    delete ConnectedClient[USER_ID];
 }
 
 //start http server, this server is only visible between container
