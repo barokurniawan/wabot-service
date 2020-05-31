@@ -15,86 +15,113 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
     extended: true
 }));
 
-const SESSION_FILE_PATH = './bot-session.json';
-let sessionCfg;
-if (fs.existsSync(SESSION_FILE_PATH)) {
-    sessionCfg = require(SESSION_FILE_PATH);
-}
-
-let client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
+var ConnectedClient = [];
 const routeMain = new RouteMain();
-routeMain.setBotClient(client);
+routeMain.setBotClient(ConnectedClient);
 routeMain.setQRModule(QRCode);
 
-client.on('disconnected', (reason) => {
-    console.log('Client was logged out', reason);
+app.get('/api/registration', function (req, res) {
+    var querySTR = req.query;
+    if (typeof querySTR.phone == 'undefined') {
+        res.setHeader('Content-Type', 'Application/Json');
+        res.send(JSON.stringify({
+            info: false,
+            status: 'Phone number is required to registration.'
+        }));
 
+        return;
+    }
+
+    var USER_ID = generateID(querySTR.phone);
+    var SESSION_FILE_PATH = './bot-session' + USER_ID + '.json';
+    let sessionCfg;
     if (fs.existsSync(SESSION_FILE_PATH)) {
+        sessionCfg = require(SESSION_FILE_PATH);
+    }
+
+    var client = new Client({ puppeteer: { headless: true, args: ['--no-sandbox'] }, session: sessionCfg });
+    client.on('disconnected', (reason) => {
+        if (fs.existsSync(SESSION_FILE_PATH)) {
+            // remove current session file
+            fs.unlinkSync(SESSION_FILE_PATH);
+            sessionCfg = null;
+        }
+
+        routeMain.isClientReady(false);
+
+        //destroy client instance
+        client.destroy().then(function () {
+            console.log('Client is shutdown..');
+            //start whatsapp client engine 
+            client.initialize().then(function () {
+                console.log('Fresh copy is ready..');
+            });
+        });
+    });
+
+    client.on('authenticated', (session) => {
+        console.log('login sucess..');
+        sessionCfg = session;
+        fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
+            if (err) {
+                console.error(err);
+            }
+        });
+    });
+
+    client.on('auth_failure', msg => {
+        // Fired if session restore was unsuccessfull
+        console.error('AUTHENTICATION FAILURE', msg);
+
         // remove current session file
         fs.unlinkSync(SESSION_FILE_PATH);
         sessionCfg = null;
-    }
 
-    routeMain.isClientReady(false);
-
-    //destroy client instant 
-    client.destroy().then(function () {
-        console.log('Client is shutdown..');
-        //start whatsapp client engine 
-        client.initialize().then(function () {
-            console.log('Fresh copy is ready..');
+        //destroy client instant 
+        client.destroy().then(function () {
+            console.log('Client is shutdown..');
+            //start whatsapp client engine 
+            client.initialize().then(function () {
+                console.log('Fresh copy is ready..');
+            });
         });
     });
-});
 
-client.on('authenticated', (session) => {
-    console.log('login sucess..');
-    sessionCfg = session;
-    fs.writeFile(SESSION_FILE_PATH, JSON.stringify(session), function (err) {
-        if (err) {
-            console.error(err);
+    client.on('qr', (qr) => {
+        // Generate and scan this code with your phone
+        routeMain.setQRCode(qr);
+        console.log("qrcode is ready..");
+    });
+
+    client.on('ready', () => {
+        routeMain.setQRCode(null);
+        routeMain.isClientReady(true);
+        console.log('Client is ready..');
+    });
+
+    client.on('message', async msg => {
+        console.log(util.format("incoming message from %s : %s", msg.from, msg.body));
+        if (msg.body == '!ping') {
+            const chat = await msg.getChat();
+            chat.sendStateTyping();
+            client.sendMessage(msg.from, 'pong');
+            chat.clearState();
         }
     });
-});
 
-client.on('auth_failure', msg => {
-    // Fired if session restore was unsuccessfull
-    console.error('AUTHENTICATION FAILURE', msg);
-
-    // remove current session file
-    fs.unlinkSync(SESSION_FILE_PATH);
-    sessionCfg = null;
-
-    //destroy client instant 
-    client.destroy().then(function () {
-        console.log('Client is shutdown..');
-        //start whatsapp client engine 
-        client.initialize().then(function () {
-            console.log('Fresh copy is ready..');
-        });
+    //start whatsapp client engine 
+    client.initialize().then(function () {
+        console.log('initializing');
+        //add to ConnectedClient list 
+        ConnectedClient[USER_ID] = client;
+        res.setHeader('Content-Type', 'Application/Json');
+        res.send(JSON.stringify({
+            info: true,
+            status: 'Registration success.'
+        }));
+    }).catch(function (err) {
+        console.error(err);
     });
-});
-
-client.on('qr', (qr) => {
-    // Generate and scan this code with your phone
-    routeMain.setQRCode(qr);
-    console.log("qrcode is ready..");
-});
-
-client.on('ready', () => {
-    routeMain.setQRCode(null);
-    routeMain.isClientReady(true);
-    console.log('Client is ready..');
-});
-
-client.on('message', async msg => {
-    console.log(util.format("incoming message from %s : %s", msg.from, msg.body));
-    if (msg.body == '!ping') {
-        const chat = await msg.getChat();
-        chat.sendStateTyping();
-        client.sendMessage(msg.from, 'pong');
-        chat.clearState();
-    }
 });
 
 //define route request
@@ -140,10 +167,17 @@ app.get('/api/health', function (req, res) {
     }));
 });
 
-//start whatsapp client engine 
-client.initialize().catch(function (err) {
-    console.error(err);
+app.get('/api/list-user', function (req, res) {
+    res.setHeader('Content-Type', 'Application/Json');
+    res.send(JSON.stringify({
+        info: true,
+        data: ConnectedClient
+    }));
 });
+
+function generateID(phone) {
+    return phone + "@c.us";
+}
 
 //start http server, this server is only visible between container
 //not visible to outside, use interface to get access to the engine
