@@ -13,8 +13,38 @@ services:
     image: wabot_engine
     container_name: wabot_engine
     ports:
-        - "3002:3002"
+        - "3002"
     volumes:
       - ./engine:/var/www
       - /var/www/node_modules
     restart: always
+
+  gui:
+    networks: 
+      - wabot_network
+    build: 
+      context: ./
+      dockerfile: docker/gui.dockerfile
+    image: wabot_gui
+    container_name: wabot_gui
+    volumes: 
+      - ./gui:/var/www
+    restart: always
+    depends_on: 
+      - engine
+
+  web:
+    networks: 
+      - wabot_network
+    build: 
+      context: ./
+      dockerfile: docker/web.dockerfile
+    image: wabot_web
+    container_name: wabot_web
+    ports: 
+      - "8080:80"
+    volumes: 
+      - ./gui:/var/www
+    restart: always
+    depends_on: 
+      - gui
