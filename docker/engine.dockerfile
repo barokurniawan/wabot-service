@@ -1,5 +1,6 @@
 FROM node:10
 RUN apt-get update
+RUN apt-get upgrade -y
 RUN apt-get install -y \
     gconf-service libxext6 libxfixes3 libxi6 libxrandr2 \
     libxrender1 libcairo2 libcups2 libdbus-1-3 libexpat1 \
