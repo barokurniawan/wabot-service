@@ -1,3 +1,5 @@
 engine/node_modules
 engine/bot-session.json
 interface/web/vendor
+interface/web/storage/logs
+.env
