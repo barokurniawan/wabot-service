@@ -3,10 +3,10 @@ FROM php:7.4-fpm
 ARG uid=${UID}
 ARG user=${USER}
 
-RUN apt-get update \
+RUN apt-get update && \
     apt-get install -y \
-    curl libpng-dev libonig-dev\
-    libxml2-dev zip unzip\
+    curl libpng-dev libonig-dev \
+    libxml2-dev zip unzip \
     nano git
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -18,7 +18,6 @@ RUN docker-php-ext-install \
     bcmath \
     pcntl \
     gd
-
 
 # create system user 
 RUN useradd -G www-data,root -u $uid -d /home/$user $user
