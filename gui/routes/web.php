@@ -14,10 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Auth::routes();
+
+Route::middleware('auth')->prefix('internal')->group(function () {
+    Route::get('/', 'InternalController@main');
 });
 
-Auth::routes();
+Route::get('/', function () {
+    return view('welcome');
+})->name('main_page');
 
 Route::get('/home', 'HomeController@index')->name('home');
