@@ -17,7 +17,9 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::middleware('auth')->prefix('internal')->group(function () {
-    Route::get('/', 'InternalController@main');
+    Route::get('/', 'InternalController@main')->name('internal_main');
+    Route::get('/service', 'InternalController@service')->name('internal_service');
+    Route::get('/service/new', 'InternalController@newService')->name('internal_service_new');
 });
 
 Route::get('/', function () {

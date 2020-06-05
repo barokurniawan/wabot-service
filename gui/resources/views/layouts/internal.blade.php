@@ -113,7 +113,7 @@
                     <div class="container-xl">
                         <ul class="navbar-nav">
                             <li class="nav-item active">
-                                <a class="nav-link" href="./index.html">
+                                <a class="nav-link" href="{{ route('internal_main') }}">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block"><svg
                                             xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -129,18 +129,11 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="./form-elements.html">
-                                    <span class="nav-link-icon d-md-none d-lg-inline-block"><svg
-                                            xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" />
-                                            <polyline points="9 11 12 14 20 6" />
-                                            <path
-                                                d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" />
-                                        </svg>
+                                <a class="nav-link" href="{{ route('internal_service') }}">
+                                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-md" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"></path><ellipse cx="12" cy="6" rx="8" ry="3"></ellipse><path d="M4 6v6a8 3 0 0 0 16 0v-6"></path><path d="M4 12v6a8 3 0 0 0 16 0v-6"></path></svg>
                                     </span>
-                                    <span class="nav-link-title">Device</span>
+                                    <span class="nav-link-title">Service</span>
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
