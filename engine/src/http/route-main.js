@@ -1,4 +1,5 @@
 const { MessageMedia } = require('whatsapp-web.js');
+const cfg = require('../../src/lib/constant');
 const axios = require('axios').default;
 
 const fileToBase64 = async function (file) {
@@ -65,6 +66,7 @@ module.exports = class RouteMain {
             res.setHeader("Content-Type", "Application/Json");
             res.status(200).send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.MISSING_REQUIRED_ARGS,
                 status: "CL is required"
             }));
         }
@@ -74,6 +76,7 @@ module.exports = class RouteMain {
             res.setHeader('Content-Type', 'Application/Json');
             res.send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.CLIENT_IS_NOT_EXISTS,
                 status: 'Client is not exists'
             }));
             return;
@@ -83,6 +86,7 @@ module.exports = class RouteMain {
         if (_that.clientReady[USER_ID] == false) {
             res.send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.CLIENT_IS_NOT_READY,
                 status: 'Client is not ready'
             }));
             return;
@@ -131,6 +135,7 @@ module.exports = class RouteMain {
             res.setHeader("Content-Type", "Application/Json");
             res.status(200).send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.MISSING_REQUIRED_ARGS,
                 status: "CL is required"
             }));
         }
@@ -140,6 +145,7 @@ module.exports = class RouteMain {
             res.setHeader('Content-Type', 'Application/Json');
             res.send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.CLIENT_IS_NOT_EXISTS,
                 status: 'Client is not exists'
             }));
             return;
@@ -149,6 +155,7 @@ module.exports = class RouteMain {
             res.setHeader('Content-Type', 'Application/Json');
             res.send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.CLIENT_IS_NOT_READY,
                 status: 'Client is not ready'
             }));
 
@@ -179,6 +186,7 @@ module.exports = class RouteMain {
             res.setHeader("Content-Type", "Application/Json");
             res.status(200).send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.MISSING_REQUIRED_ARGS,
                 status: "CL is required"
             }));
         }
@@ -188,6 +196,7 @@ module.exports = class RouteMain {
             res.setHeader('Content-Type', 'Application/Json');
             res.send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.CLIENT_IS_NOT_EXISTS,
                 status: 'Client is not exists'
             }));
             return;
@@ -202,18 +211,21 @@ module.exports = class RouteMain {
                 data: {
                     base64: base64
                 },
+                status_code: cfg.status_code.QRCODE_READY,
                 status: "QR is ready"
             }));
         } else if (qr === null) {
             res.setHeader("Content-Type", "Application/Json");
             res.status(200).send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.CLIENT_IS_NOT_EXISTS,
                 status: "Device is not registered"
             }));
         } else {
             res.setHeader("Content-Type", "Application/Json");
             res.status(200).send(JSON.stringify({
                 info: false,
+                status_code: cfg.status_code.CLIENT_CONNECTED,
                 status: "Device is already connected"
             }));
         }

@@ -13,7 +13,7 @@ services:
     image: wabot_engine
     container_name: wabot_engine
     ports:
-        - "3002:3002"
+        - "3002"
     volumes:
       - ./engine:/var/www
       - /var/www/node_modules

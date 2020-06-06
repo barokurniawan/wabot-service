@@ -68,7 +68,7 @@
             if(res.info){
                 $.post('{{ route("api.registration") }}', {phone: phone}, 
                 function(response){
-                    if(response.info){
+                    if(response.info || response.status_code == 101){
                         window.location.assign('{{ route("internal_service_new") }}?step=2');
                         return;
                     }

@@ -4,7 +4,8 @@ const util = require('util');
 const express = require('express');
 const RouteMain = require('./src/http/route-main');
 const QRCode = require('qrcode');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const cfg = require('./src/lib/constant');
 
 const app = express();
 const port = 3002;
@@ -29,6 +30,7 @@ app.get('/api/registration', function (req, res) {
         res.setHeader('Content-Type', 'Application/Json');
         res.send(JSON.stringify({
             info: false,
+            status_code: cfg.status_code.MISSING_REQUIRED_ARGS,
             status: 'Phone number is required to registration.'
         }));
 
@@ -40,6 +42,7 @@ app.get('/api/registration', function (req, res) {
         res.setHeader('Content-Type', 'Application/Json');
         res.send(JSON.stringify({
             info: false,
+            status_code: cfg.status_code.CLIENT_IS_REGISTERED,
             status: 'Client is already registered.'
         }));
 

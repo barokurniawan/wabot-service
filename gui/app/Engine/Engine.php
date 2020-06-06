@@ -48,7 +48,7 @@ class Engine implements EngineBlueprint
     {
         $cl_check = Engine::escapePhoneNumber($args->getCl());
         if ($cl_check == false) {
-            return [
+            return (object) [
                 'info' => false,
                 'message' => "Invalid CL parameter"
             ];
@@ -56,7 +56,7 @@ class Engine implements EngineBlueprint
 
         $ph_check = Engine::escapePhoneNumber($args->getPhone());
         if ($ph_check == false) {
-            return [
+            return (object) [
                 'info' => false,
                 'message' => "Invalid phone number format"
             ];
@@ -64,7 +64,24 @@ class Engine implements EngineBlueprint
 
         $args->setCl($cl_check);
         $args->setPhone($ph_check);
-        $response = Http::post($this->getEngineAddress() . Engine::END_POINT_SENDER, $args->toArray());
+
+        try {
+            $response = Http::post($this->getEngineAddress() . Engine::END_POINT_SENDER, $args->toArray());
+        } catch (\Throwable $th) {
+            return (object) [
+                'info' => false,
+                'message' => "Could not connect to the engine"
+            ];
+        }
+
+        if (!$response->ok() || $response->serverError() || $response->clientError()) {
+            return (object) [
+                'info' => false,
+                'message' => $response->body()
+            ];
+        }
+
+        return json_decode($response->body());
     }
 
     /**
