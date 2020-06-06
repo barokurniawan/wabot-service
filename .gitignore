@@ -1,3 +1,6 @@
 engine/node_modules
-engine/bot-session.json
-interface/web/vendor
+engine/session
+gui/node_modules
+gui/vendor
+gui/storage
+gui/.env
