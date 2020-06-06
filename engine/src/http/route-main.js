@@ -207,13 +207,13 @@ module.exports = class RouteMain {
         } else if (qr === null) {
             res.setHeader("Content-Type", "Application/Json");
             res.status(200).send(JSON.stringify({
-                info: true,
+                info: false,
                 status: "Device is not registered"
             }));
         } else {
             res.setHeader("Content-Type", "Application/Json");
             res.status(200).send(JSON.stringify({
-                info: true,
+                info: false,
                 status: "Device is already connected"
             }));
         }

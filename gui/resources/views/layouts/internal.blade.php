@@ -6,7 +6,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Dashboard - Tabler - Premium and Open Source dashboard template with responsive and high quality UI.</title>
+    <title>Wabot Service</title>
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <meta name="msapplication-TileColor" content="#206bc4" />
     <meta name="theme-color" content="#206bc4" />
@@ -27,6 +27,7 @@
             display: none;
         }
     </style>
+    @stack('extended_css')
 </head>
 
 <body class="antialiased">
@@ -203,15 +204,13 @@
 
     <!-- Libs JS -->
     <script src="{{ asset('theme/tabler/dist/libs/bootstrap/dist/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('theme/tabler/dist/libs/jquery/dist/jquery.slim.min.js') }}"></script>
+    <script src="{{ asset('theme/tabler/dist/libs/jquery/dist/jquery.min.js') }}"></script>
     <script src="{{ asset('theme/tabler/dist/libs/apexcharts/dist/apexcharts.min.js') }}"></script>
     <script src="{{ asset('theme/tabler/dist/libs/jqvmap/dist/jquery.vmap.min.js') }}"></script>
     <script src="{{ asset('theme/tabler/dist/libs/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
     <script src="{{ asset('theme/tabler/dist/libs/peity/jquery.peity.min.js') }}"></script>
     <script src="{{ asset('theme/tabler/dist/js/tabler.min.js') }}"></script>
-    <script>
-        document.body.style.display = "block"
-    </script>
+    <script>document.body.style.display = "block";</script>
+    @stack('extended_js')
 </body>
-
 </html>

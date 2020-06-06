@@ -1,5 +1,6 @@
 <?php
 
+use App\Engine\Engine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Auth::routes();
+Route::middleware('auth')->get('/home', 'InternalController@main')->name('home');
 
 Route::middleware('auth')->prefix('internal')->group(function () {
     Route::get('/', 'InternalController@main')->name('internal_main');
@@ -26,4 +28,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('main_page');
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::prefix('ajax')->group(function () {
+    Route::get('/validate/phone', 'InternalController@validateHandler')->name('ajax_validate_phone');
+});
