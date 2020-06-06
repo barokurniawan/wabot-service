@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 networks:
   wabot_network:
     driver: bridge
@@ -19,58 +19,52 @@ services:
       - /var/www/node_modules
     restart: always
 
-  interface:
+  db:
     networks:
       - wabot_network
     build:
       context: ./
-      dockerfile: docker/interface.dockerfile
-    image: wabot_interface
-    container_name: wabot_interface
+      dockerfile: docker/database.dockerfile
+    image: wabot_db
+    container_name: wabot_db
+    ports:
+      - "5432:5432"
     volumes:
-      - ./interface/web:/var/www
+      - /opt/docker_wabot_pg_data:/var/lib/postgresql/data
     restart: always
+    environment:
+      - POSTGRES_USER=kurniawan
+      - POSTGRES_PASSWORD=@@@udanup
+      - POSTGRES_DB=wabot_db
+    depends_on: 
+      - engine
+
+  gui:
+    networks: 
+      - wabot_network
+    build: 
+      context: ./
+      dockerfile: docker/gui.dockerfile
+    image: wabot_gui
+    container_name: wabot_gui
+    volumes: 
+      - ./gui:/var/www
+    restart: always
+    depends_on: 
+      - db
 
   web:
-    networks:
+    networks: 
       - wabot_network
-    build:
+    build: 
       context: ./
       dockerfile: docker/web.dockerfile
     image: wabot_web
     container_name: wabot_web
-    restart: always
-    volumes:
-      - ./interface/web:/var/www
-    ports:
+    ports: 
       - "8080:80"
-    depends_on:
-      - interface
-
-  queue:
-    build:
-      context: ./
-      dockerfile: docker/queue.dockerfile
-    image: wabot_queue
-    networks:
-      - wabot_network
-    container_name: wabot_queue
-    depends_on:
-      - interface
-    volumes:
-      - ./interface/web:/var/www
-    networks:
-      - wabot_network
+    volumes: 
+      - ./gui:/var/www
     restart: always
-
-  redis:
-    build:
-      context: ./
-      dockerfile: docker/redis.dockerfile
-    container_name: wabot_redis
-    image: wabot_redis
-    networks:
-      - wabot_network
-    ports:
-      - "6379:6379"
-    restart: always
+    depends_on: 
+      - gui

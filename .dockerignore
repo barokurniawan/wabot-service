@@ -1,2 +1,6 @@
 engine/node_modules
+gui/node_modules
+gui/vendor
+gui/storage
 npm-debug.log
+session

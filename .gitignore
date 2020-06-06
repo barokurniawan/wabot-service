@@ -1,6 +1,14 @@
 engine/node_modules
+<<<<<<< HEAD
 engine/session
 gui/node_modules
 gui/vendor
 gui/storage
 gui/.env
+=======
+engine/bot-session.json
+interface/web/vendor
+interface/web/storage/logs
+engine/session
+.env
+>>>>>>> d8c8f588cd5de05b9c7b5094708a72a27a4b771d

@@ -1,20 +1,10 @@
-# wabot-service
-A WhatsApp API client that connects through the WhatsApp Web browser app
+# wabot-service (XBOT)
+A WhatsApp API client that connects through the WhatsApp Web browser app with 
+support multiple account in one instance application
 
 It uses Puppeteer to run a real instance of Whatsapp Web to avoid getting blocked.
 
 NOTE: I can't guarantee you will not be blocked by using this method, although it has worked for me. WhatsApp does not allow bots or unofficial clients on their platform, so this shouldn't be considered totally safe.
-
-## Engine
-
-Engine is a web application write in javascript (nodejs), play role as a main application (main engine)
-so request is not direcly to the engine end point.
-
-## Interface
-
-Interface is a web application that run as API gateway for Engine. Every request is handle by interface and 
-then forwarded to the Engine. Interface play role as a middleware layer, every request validated in interface before 
-forwarded to the engine
 
 ## Installation
 `docker-compose up --build`
