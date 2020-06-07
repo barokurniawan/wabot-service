@@ -98,10 +98,10 @@ app.get('/api/registration', function (req, res) {
         //destroy client instant 
         ConnectedClient[USER_ID].destroy().then(function () {
             console.log('Client is shutdown..');
-            //start whatsapp client engine 
-            ConnectedClient[USER_ID].initialize().then(function () {
-                console.log('Fresh copy is ready..');
-            });
+
+            // delete from connected list
+            removeClient(USER_ID);
+            routeMain.setBotClient(ConnectedClient);
         });
     });
 

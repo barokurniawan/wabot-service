@@ -78,7 +78,7 @@ $(document).ready(function(){
             cl: '085882174015'
         }, function(res){
             if(res.info){
-                alert('it\'s work like a charm')
+                alert('it\'s work like a charm. You\'re good to go.')
                 window.location.assign('{{ route("home") }}');
             } else {
                 alert(res.status);
