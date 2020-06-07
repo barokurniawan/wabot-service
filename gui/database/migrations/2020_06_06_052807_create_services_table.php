@@ -17,17 +17,17 @@ class CreateServicesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
             $table->string('whatsapp_number', 20);
-            $table->string('webVersion', 120);
-            $table->string('pushname', 120);
-            $table->string('server', 120);
-            $table->string('user', 120);
-            $table->string('_serialized', 120);
-            $table->string('wa_version', 120);
-            $table->string('os_version', 120);
-            $table->string('device_manufacturer', 120);
-            $table->string('device_model', 120);
-            $table->string('os_build_number', 120);
-            $table->string('platform', 120);
+            $table->string('webVersion', 120)->nullable();
+            $table->string('pushname', 120)->nullable();
+            $table->string('server', 120)->nullable();
+            $table->string('user', 120)->nullable();
+            $table->string('_serialized', 120)->nullable();
+            $table->string('wa_version', 120)->nullable();
+            $table->string('os_version', 120)->nullable();
+            $table->string('device_manufacturer', 120)->nullable();
+            $table->string('device_model', 120)->nullable();
+            $table->string('os_build_number', 120)->nullable();
+            $table->string('platform', 120)->nullable();
             $table->timestamps();
 
             $table->foreign('user_id')

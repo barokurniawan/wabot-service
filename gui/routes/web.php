@@ -30,4 +30,8 @@ Route::get('/', function () {
 
 Route::prefix('ajax')->group(function () {
     Route::get('/validate/phone', 'InternalController@validateHandler')->name('ajax_validate_phone');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/datatable/services', 'InternalController@serviceShowlistHandler')->name('datatable_service');
+    });
 });

@@ -21,7 +21,8 @@
     <!-- CSS files -->
     <link href="{{ asset('theme/tabler/dist/libs/jqvmap/dist/jqvmap.min.css') }}" rel="stylesheet" />
     <link href="{{ asset('theme/tabler/dist/css/tabler.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('theme/tabler/dist/css/demo.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('theme/tabler/dist/css/custom.css') }}" rel="stylesheet" />
+    <link href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet" />
     <style>
         body {
             display: none;
@@ -210,7 +211,12 @@
     <script src="{{ asset('theme/tabler/dist/libs/jqvmap/dist/maps/jquery.vmap.world.js') }}"></script>
     <script src="{{ asset('theme/tabler/dist/libs/peity/jquery.peity.min.js') }}"></script>
     <script src="{{ asset('theme/tabler/dist/js/tabler.min.js') }}"></script>
-    <script>document.body.style.display = "block";</script>
+    <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.21/js/dataTables.bootstrap4.min.js"></script>
+    <script type="text/javascript">
+        document.body.style.display = "block";
+        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+    </script>
     @stack('extended_js')
 </body>
 </html>

@@ -45,7 +45,7 @@
                     <h4 class="card-title">My Services</h4>
                 </div>
                 <div class="table-responsive">
-                    <table class="table card-table table-vcenter">
+                    <table class="table card-table table-vcenter" id="datatable">
                         <thead>
                             <tr>
                                 <th>Device</th>
@@ -54,30 +54,7 @@
                                 <th>Media send</th>
                             </tr>
                         </thead>
-                        <tr>
-                            <td>
-                                <a href="">082215512601</a>
-                            </td>
-                            <td class="text-muted">Connected</td>
-                            <td class="text-muted">4,896</td>
-                            <td class="text-muted">3,654</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="">082215512602</a>
-                            </td>
-                            <td class="text-muted">Connected</td>
-                            <td class="text-muted">4,896</td>
-                            <td class="text-muted">3,654</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <a href="">082215512603</a>
-                            </td>
-                            <td class="text-muted">Connected</td>
-                            <td class="text-muted">4,896</td>
-                            <td class="text-muted">3,654</td>
-                        </tr>
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -96,7 +73,7 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Instagram</td>
+                            <td>PAYMENT_NOTIF</td>
                             <td>3,550</td>
                             <td class="w-50">
                                 <div class="progress progress-xs">
@@ -105,38 +82,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Twitter</td>
+                            <td>REG_NOTIF</td>
                             <td>1,798</td>
                             <td class="w-50">
                                 <div class="progress progress-xs">
                                     <div class="progress-bar bg-primary" style="width: 35.96%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Facebook</td>
-                            <td>1,245</td>
-                            <td class="w-50">
-                                <div class="progress progress-xs">
-                                    <div class="progress-bar bg-primary" style="width: 24.9%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Pinterest</td>
-                            <td>854</td>
-                            <td class="w-50">
-                                <div class="progress progress-xs">
-                                    <div class="progress-bar bg-primary" style="width: 17.08%"></div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>VK</td>
-                            <td>650</td>
-                            <td class="w-50">
-                                <div class="progress progress-xs">
-                                    <div class="progress-bar bg-primary" style="width: 13.0%"></div>
                                 </div>
                             </td>
                         </tr>
@@ -147,3 +97,33 @@
     </div>
 </div>
 @endsection
+
+@push('extended_js')
+<script>
+    $(document).ready(function(){
+        $('#datatable').DataTable({
+            ordering: false,
+            lengthChange: false,
+            language: { search: "" },
+            responsive: true,
+            pagingType: "simple",
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '{{ route("datatable_service") }}',
+                type: 'POST',
+            },
+            columns: [
+                { data: "no" },
+                { data: "whatsapp_number" },
+                { data: "sum_message_text" },
+                { data: "sum_message_media" },
+            ],
+            drawCallback: function(){
+                $('.dataTables_filter input').removeClass('form-control-sm')
+                .attr('placeholder', 'Search here..');
+            }
+        });
+    });
+</script>
+@endpush
