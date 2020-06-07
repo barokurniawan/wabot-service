@@ -22,8 +22,14 @@ class InternalController extends Controller
 
     public function newService(Request $request)
     {
+        if (!empty($request->step) && $request->step > 1 && empty($request->cl)) {
+            return route('internal_service_new');
+        }
+
         return view('internal.form_create_service', [
-            'step' => $request->step
+            'step' => $request->step,
+            'client_phone' => $request->cl,
+            'userID' => Auth::user()->id
         ]);
     }
 

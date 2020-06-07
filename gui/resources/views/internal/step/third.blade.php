@@ -75,7 +75,7 @@ $(document).ready(function(){
     function sendMessage(ph, msg, doneCallback = null){
         $.post('{{ route("api.send-message") }}', {
             phone: ph, message: msg,
-            cl: '085882174015'
+            cl: '{{ $client_phone }}'
         }, function(res){
             if(res.info){
                 alert('it\'s work like a charm. You\'re good to go.')

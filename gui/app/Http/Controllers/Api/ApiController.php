@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Engine\Engine;
+use App\Models\Service;
 use App\Engine\MessageArgs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -91,8 +92,24 @@ class ApiController extends Controller
             ];
         }
 
+        if (empty($request->user_id)) {
+            return [
+                'info' => false,
+                'message' => 'User id is required'
+            ];
+        }
+
         $engine = Engine::getInstance();
         $response = $engine->clientRegistration($request->phone);
+
+        /**
+         * note: register new service only when API result is only true. 
+         * when user is already registered API will return false
+         */
+        if ($request->info) {
+            $service = Service::getInstance();
+            $service->registerService($request->phone, $request->user_id);
+        }
 
         return (array) $response;
     }

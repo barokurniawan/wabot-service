@@ -66,10 +66,10 @@
             }
         }).then(function(res){
             if(res.info){
-                $.post('{{ route("api.registration") }}', {phone: phone}, 
+                $.post('{{ route("api.registration") }}', {phone: phone, user_id: '{{ $userID }}'}, 
                 function(response){
                     if(response.info || response.status_code == 101){
-                        window.location.assign('{{ route("internal_service_new") }}?step=2');
+                        window.location.assign('{{ route("internal_service_new") }}?step=2&cl=' + phone);
                         return;
                     }
                 }).always(function(){
