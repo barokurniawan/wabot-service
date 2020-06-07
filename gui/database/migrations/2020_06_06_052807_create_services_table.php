@@ -17,6 +17,7 @@ class CreateServicesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->index();
             $table->string('whatsapp_number', 20);
+            $table->string('client_status', 50)->nullable();;
             $table->string('webVersion', 120)->nullable();
             $table->string('pushname', 120)->nullable();
             $table->string('server', 120)->nullable();

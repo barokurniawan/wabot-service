@@ -1,6 +1,5 @@
 <?php
 
-use App\Engine\Engine;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -34,4 +33,8 @@ Route::prefix('ajax')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::post('/datatable/services', 'InternalController@serviceShowlistHandler')->name('datatable_service');
     });
+});
+
+Route::prefix('strict/internal')->group(function () {
+    Route::get('disconect', 'StrictInternalController@disconectClient');
 });

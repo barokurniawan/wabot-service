@@ -19,6 +19,9 @@ class Service extends Model
      */
     private $errorMessage;
 
+    const STATUS_DISCONNECTED = "DISCONNECTED";
+    const STATUS_CONNECTED = "CONNECTED";
+
     public static function getInstance()
     {
         if (empty(self::$instance)) {
@@ -58,8 +61,21 @@ class Service extends Model
 
         $model = new Service;
         $model->whatsapp_number = $phone;
+        $model->user_id = $userID;
 
         return (bool) $model->save();
+    }
+
+    public function setServiceStatus(string $whatsappNumber, string $client_status)
+    {
+        $model = Service::where('whatsapp_number', $whatsappNumber)->first();
+        if (empty($model)) {
+            $this->setErrorMessage('Service not found');
+            return false;
+        }
+
+        $model->client_status = $client_status;
+        return $model->save();
     }
 
     public function setErrorMessage(string $msg)

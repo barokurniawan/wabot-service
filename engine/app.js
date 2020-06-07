@@ -73,6 +73,7 @@ app.get('/api/registration', function (req, res) {
 
         //destroy client instance
         ConnectedClient[USER_ID].destroy().then(function () {
+            console.log(ConnectedClient[USER_ID]);
             console.log('Client is shutdown..');
         });
     });

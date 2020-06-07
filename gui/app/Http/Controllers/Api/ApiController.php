@@ -106,7 +106,7 @@ class ApiController extends Controller
          * note: register new service only when API result is only true. 
          * when user is already registered API will return false
          */
-        if ($request->info) {
+        if ($response->info) {
             $service = Service::getInstance();
             $service->registerService($request->phone, $request->user_id);
         }
