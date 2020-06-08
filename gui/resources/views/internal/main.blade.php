@@ -114,8 +114,8 @@
                 type: 'POST',
             },
             columns: [
-                { data: "no" },
                 { data: "whatsapp_number" },
+                { data: "client_status" },
                 { data: "sum_message_text" },
                 { data: "sum_message_media" },
             ],

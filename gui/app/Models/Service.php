@@ -59,6 +59,12 @@ class Service extends Model
             return false;
         }
 
+        $model = Service::where('whatsapp_number', $phone)->first();
+        if (!empty($model)) {
+            $this->setErrorMessage('Service is already registered');
+            return false;
+        }
+
         $model = new Service;
         $model->whatsapp_number = $phone;
         $model->user_id = $userID;
@@ -68,7 +74,8 @@ class Service extends Model
 
     public function setServiceStatus(string $whatsappNumber, string $client_status)
     {
-        $model = Service::where('whatsapp_number', $whatsappNumber)->first();
+        $model = Service::where('whatsapp_number', $whatsappNumber)
+            ->orWhere('_serialized', $whatsappNumber)->first();
         if (empty($model)) {
             $this->setErrorMessage('Service not found');
             return false;

@@ -121,4 +121,24 @@ class ApiController extends Controller
 
         return (array) $response;
     }
+
+    /**
+     * Handle callback from engine when user disconect their device
+     */
+    public function disconectClient(Request $request)
+    {
+        $request->validate([
+            'cl' => 'required'
+        ]);
+
+        $service = Service::getInstance();
+        $service->setServiceStatus(
+            $request->cl,
+            Service::STATUS_DISCONNECTED
+        );
+
+        return [
+            "info" => true
+        ];
+    }
 }

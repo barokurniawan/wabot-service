@@ -24,7 +24,7 @@ const routeMain = new RouteMain();
 routeMain.setBotClient(ConnectedClient);
 routeMain.setQRModule(QRCode);
 
-app.get('/api/registration', function (req, res) {
+app.get('/api/registration', async function (req, res) {
     var querySTR = req.query;
     if (typeof querySTR.phone == 'undefined') {
         res.setHeader('Content-Type', 'Application/Json');
@@ -49,10 +49,13 @@ app.get('/api/registration', function (req, res) {
         return;
     }
 
+    console.log('registering new service : ' + querySTR.phone);
+
     StreamQRList[USER_ID] = null;
     var SESSION_FILE_PATH = './session/botsession-' + USER_ID + '.json';
     let sessionCfg;
     if (fs.existsSync(SESSION_FILE_PATH)) {
+        console.log('loading session from storage : ' + querySTR.phone);
         sessionCfg = require(SESSION_FILE_PATH);
     }
 
@@ -133,19 +136,27 @@ app.get('/api/registration', function (req, res) {
     });
 
     //start whatsapp client engine 
-    ConnectedClient[USER_ID].initialize().then(function () {
-        console.log('initializing');
-    }).catch(function (err) {
-        console.error(err);
-    });
+    console.log('initializing');
+    var registeringOK = false;
+    var message = "Registration Success";
+    try {
+        await ConnectedClient[USER_ID].initialize();
+        registeringOK = true;
+    } catch (error) {
+        message = "Unable to register client, failed to connect to the host.";
+    }
 
-    //update botclient object
-    routeMain.setBotClient(ConnectedClient);
+    if (registeringOK) {
+        //update botclient object
+        routeMain.setBotClient(ConnectedClient);
+    } else {
+        removeClient(USER_ID);
+    }
 
     res.setHeader('Content-Type', 'Application/Json');
     res.send(JSON.stringify({
-        info: true,
-        status: 'Init registration..'
+        info: registeringOK,
+        status: message
     }));
 });
 

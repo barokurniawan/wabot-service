@@ -34,7 +34,3 @@ Route::prefix('ajax')->group(function () {
         Route::post('/datatable/services', 'InternalController@serviceShowlistHandler')->name('datatable_service');
     });
 });
-
-Route::prefix('strict/internal')->group(function () {
-    Route::get('disconect', 'StrictInternalController@disconectClient');
-});

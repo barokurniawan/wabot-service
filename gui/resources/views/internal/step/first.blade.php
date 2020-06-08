@@ -68,11 +68,13 @@
             if(res.info){
                 $.post('{{ route("api.registration") }}', {phone: phone, user_id: '{{ $userID }}'}, 
                 function(response){
-                    if(response.info || response.status_code == 101){
+                    if(response.info){
                         window.location.assign('{{ route("internal_service_new") }}?step=2&cl=' + phone);
                         return;
+                    } else {
+                        alert(response.status);
                     }
-                }).always(function(){
+                }).done(function(){
                     if(doneCallback != null){
                         doneCallback();
                     }
@@ -80,11 +82,10 @@
             }
         }).fail(function(err){
             alert(err.statusText);
-        }).always(function(){
             if(doneCallback != null){
                 doneCallback();
             }
-        });
+        })
     }
 </script>
 @endpush

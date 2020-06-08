@@ -31,3 +31,7 @@ Route::post('/health',  'Api\ApiController@healthHandler')->name('api.health');
 Route::post('/registration',  'Api\ApiController@registrationHandler')->name('api.registration');
 
 Route::get('/list-users', 'Api\ApiController@listUserHandler')->name('api.list-users');
+
+Route::prefix('user/callback')->group(function () {
+    Route::get('disconnect', 'Api\ApiController@disconnectClient')->name('callback.user.disconnect');
+});
