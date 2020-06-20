@@ -37,3 +37,7 @@ Check server health :
 ```
 http://localhost:8080/api/health
 ```
+
+# Thanks to
+
+[https://github.com/pedroslopez/whatsapp-web.js](wwjs)
