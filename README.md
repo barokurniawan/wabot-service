@@ -40,4 +40,4 @@ http://localhost:8080/api/health
 
 # Thanks to
 
-[https://github.com/pedroslopez/whatsapp-web.js](wwjs)
+[whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js)
