@@ -39,5 +39,11 @@ http://localhost:8080/api/health
 ```
 
 # Thanks to
-
 [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js)
+
+# Looking for contributors
+
+Currently we are looking for contributor, Contact me by sending an email (check my bio).
+
+
+
