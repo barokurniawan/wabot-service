@@ -7,7 +7,12 @@ It uses Puppeteer to run a real instance of Whatsapp Web to avoid getting blocke
 NOTE: I can't guarantee you will not be blocked by using this method, although it has worked for me. WhatsApp does not allow bots or unofficial clients on their platform, so this shouldn't be considered totally safe.
 
 ## Installation
-`docker-compose up --build`
+1. `docker-compose up --build`.
+2. Install GUI dependency, type `composer install` in wabot_gui container.
+3. Run `npm install` in wabot_engine container to install/update [whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js) and puppeter.
+4. CHMOD */gui/strage/* to *0777*. 
+5. Run `php artisan key:generate`.
+6. Setup database connection (pgsql) then run `php artisan migrate` from inside *wabot_gui* container.
 
 ## Usage 
 Send a text message :
