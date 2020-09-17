@@ -72,6 +72,11 @@
                         window.location.assign('{{ route("internal_service_new") }}?step=2&cl=' + phone);
                         return;
                     } else {
+                        if(response.status_code == 101)
+                        {
+                            window.location.assign('{{ route("internal_service_new") }}?step=2&cl=' + phone);
+                        }
+
                         alert(response.status);
                     }
                 }).done(function(){
