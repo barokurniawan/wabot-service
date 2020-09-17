@@ -22,5 +22,9 @@ RUN docker-php-ext-install \
 # install composer 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# add artisan auto completion
+ADD docker/artisan/autocomplete.txt /autocomplete.txt
+RUN touch /root/.bashrc && cat /autocomplete.txt >> /root/.bashrc
+
 RUN apt autoremove
 WORKDIR /var/www
